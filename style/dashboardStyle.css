@@ -135,7 +135,12 @@ h1, h2, h3{
     background-color: color-mix(in oklab, var(--color-white) 5%, transparent);
 }
 @media screen and (max-width: 1118px) {
-
+    .menuType{
+        grid-column: 1/13;
+    }
+    .plotContainer {
+        grid-column: 1 / 13;
+    }
 }
 @media screen and (max-width: 340px) {
 
