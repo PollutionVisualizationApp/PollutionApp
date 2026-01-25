@@ -63,12 +63,13 @@ let selectedType = 'pm10';
 // Превод на SensorId -> пријателско име
 const sensorNames = {
   "3568aa20-235a-408c-861b-279c9f4d7709": "Vodno kaj Pretsedatelka",
-  "1f5c7035-6c1f-45ee-97f4-0a292b49710a": "Aerodrom",
-  "e6658b42-ee46-4f48-ba49-7ab6eaa993c5": "Debar Maalo"
+  "1002": "MOEPP Miladinovci",
+  "6c6a9ef6-85f9-45c0-9e01-0c9d2fb87bc2": "Capitol Mall",
+  "fef6bc74-bf86-4874-9531-51b033580379":"Taftalidze 2"
 };
 
 // Вчитување JSON
-fetch('img/data/Vodno_Aerodrom_monthly_avg_pm.json')
+fetch('img/data/MOEPP-Miladinovci_Taftalidze 2_Capitol Mall_monthly_avg_pm.json')
     .then(response => response.json())
     .then(data => {
       // Само за 2025 година
@@ -106,6 +107,8 @@ document.querySelectorAll('#typeButtons button').forEach(btn => {
     updateChart(selectedType, selectedSensor);
   });
 });
+const firstTypeBtn = document.querySelector('#typeButtons button');
+highlightButtons(typeContainer, firstTypeBtn);
 
 // Функција за ажурирање на график
 function updateChart(type, sensor) {
