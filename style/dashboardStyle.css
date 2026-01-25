@@ -145,3 +145,7 @@ h1, h2, h3{
 @media screen and (max-width: 340px) {
 
 }
+button.active {
+    background-color: color-mix(in oklab, var(--color-white) 10%, transparent);
+    color: var(--color-white);
+}
