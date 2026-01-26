@@ -1,213 +1,188 @@
-// window.addEventListener('load', function () {
-//   var options = {
-//     series: [{
-//       name: "pm10",
-//       data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
-//     }],
-//     chart: {
-//       height: 350,
-//       type: 'area',
-//       zoom: { enabled: false },
-//       toolbar: { show: false },
-//       foreColor: '#98a2b3'
-//     },
-//     colors: ['#ff4d4f'],
-//     dataLabels: { enabled: false },
-//     stroke: {
-//       curve: 'straight',
-//       width: 3
-//     },
-//     tooltip: {
-//     theme: 'dark', // or 'light'
-//     style: {
-//         fontSize: '12px'
-//     },
-//     },
-//     grid: {
-//       borderColor: '#98a2b3'
-//     },
-//     fill: {
-//       type: 'gradient',
-//       gradient: {
-//         shade: 'light',
-//         type: 'vertical',
-//         shadeIntensity: 0.4,
-//         gradientToColors: ['#ff9f43'],
-//         opacityFrom: 0.6,
-//         opacityTo: 0.05,
-//         stops: [0, 100]
-//       }
-//     },
-//     xaxis: {
-//       categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
-//       labels: {
-//         style: { colors: '#98a2b3' }
-//       }
-//     },
-//     yaxis: {
-//       labels: {
-//         style: { colors: '#98a2b3' }
-//       }
-//     }
-//   };
-//
-//   var chart = new ApexCharts(document.querySelector("#chart"), options);
-//   chart.render();
-// });
-
-let sensorData;
+let sensorData = [];
 let chartInstance;
-let selectedSensor;
+let selectedSensors = [];
 let selectedType = 'pm10';
-const colors  = ['#ff4d4f', '#fdb022', '#039855'];
-const options = {
-    series: [],
-    chart: { height: 350, type: 'area', zoom: { enabled: false }, toolbar: { show: false }, foreColor: '#98a2b3' },
-    // colors: ,
-    dataLabels: { enabled: false },
-    stroke: { curve: 'straight', width: 3 },
-    tooltip: { theme: 'dark', style: { fontSize: '12px' } },
-    grid: { borderColor: '#98a2b3' },
-    fill: { type: 'gradient', 
-      gradient: { shade: 'light', type: 'vertical', shadeIntensity: 0.4,
-        gradientToColors: ['#ff9f43'], opacityFrom: 0.6, opacityTo: 0.05, stops: [0,100] } 
-      },
-    xaxis: { categories: null, labels: { style: { colors: '#98a2b3' } } },
-    yaxis: { labels: { style: { colors: '#98a2b3' } } }
-  };
+let selectedYear = '2025';
+let selectedTimeframe = 'monthly';
 
-// Превод на SensorId -> пријателско име
 const sensorNames = {
-  "3568aa20-235a-408c-861b-279c9f4d7709": "Vodno kaj Pretsedatelka",
-  "1002": "MOEPP Miladinovci",
-  "6c6a9ef6-85f9-45c0-9e01-0c9d2fb87bc2": "Capitol Mall",
-  "fef6bc74-bf86-4874-9531-51b033580379":"Taftalidze 2"
+    "3568aa20-235a-408c-861b-279c9f4d7709": "Vodno",
+    "1002": "MOEPP Miladinovci",
+    "6c6a9ef6-85f9-45c0-9e01-0c9d2fb87bc2": "Capitol Mall",
+    "fef6bc74-bf86-4874-9531-51b033580379": "Taftalidze 2"
 };
 
-// Вчитување JSON
 fetch('img/data/MOEPP-Miladinovci_Taftalidze 2_Capitol Mall_monthly_avg_pm.json')
     .then(response => response.json())
     .then(data => {
-      // Само за 2025 година
-      sensorData = data.filter(d => d.Year == 2025);
+        sensorData = data;
+        initDashboard();
+    });
 
-      // Креирање бутони за сензори
-      const sensors = [...new Set(sensorData.map(d => d.SensorId))];
-      const container = document.getElementById('sensorButtons');
-      sensors.forEach((sensor, i) => {
-        const btn = document.createElement('input');
-        const label = document.createElement('label');
-       
-        btn.type = "checkbox";
-        btn.id = sensor;
-        btn.name = "location";
-        if(i==0){
-            btn.checked = true; // go selektira prviot senzor
-          }
-        // btn.dataset.sensor = sensor;
-        label.setAttribute("for", sensor);
-        label.textContent = btn.textContent = sensorNames[sensor] || sensor;
-        btn.addEventListener('change', (e) => {
-          console.log(getSelectedSensors().length);
-            if (e.target.type === 'checkbox') {
-              if (getSelectedSensors().length > 3){
-                e.target.checked = false; // zabranuva check na poveke od 3 senzori
-                return;
-              }
-              if(getSelectedSensors().length < 1) {
-                e.target.checked = true;
-                return;
-              }
-            }
-          selectedSensor = sensor;
-          highlightButtons(container, btn);
+function initDashboard() {
+    const sensorContainer = document.getElementById('sensorButtons');
+    const sensors = [...new Set(sensorData.map(d => d.SensorId))];
 
-          updateChart(selectedType, selectedSensor);
+    sensors.forEach(sensor => {
+        const btn = document.createElement('button');
+        btn.textContent = sensorNames[sensor] || sensor;
+        btn.dataset.sensor = sensor;
+        btn.addEventListener('click', () => toggleSensor(sensor, btn));
+        sensorContainer.appendChild(btn);
+    });
+
+    selectedSensors = [sensors[0]];
+    if (sensorContainer.children[0]) sensorContainer.children[0].classList.add('active');
+
+    setupFilters();
+    updateChart();
+}
+
+function setupFilters() {
+    document.getElementById('yearSelect').addEventListener('change', (e) => {
+        selectedYear = e.target.value;
+        document.getElementById('timeframeSection').style.display = (selectedYear === '2026') ? 'block' : 'none';
+        updateChart();
+    });
+
+    document.getElementById('timeframeSelect').addEventListener('change', (e) => {
+        selectedTimeframe = e.target.value;
+        updateChart();
+    });
+
+    document.querySelectorAll('#typeButtons button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            selectedType = btn.dataset.type;
+            highlightButtons(document.getElementById('typeButtons'), btn);
+            updateChart();
         });
-        container.appendChild(btn);
-        container.appendChild(label);
-      });
-
-      // Почетен сензор
-      selectedSensor = sensors[0];
-      highlightButtons(container, container.children[0]);
-
-      // Почетен график
-      updateChart(selectedType, selectedSensor);
     });
-
-// Бутони за PM тип
-const typeContainer = document.getElementById('typeButtons');
-document.querySelectorAll('#typeButtons button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    selectedType = btn.dataset.type;
-    highlightButtons(typeContainer, btn);
-    changeType(selectedType);
-  });
-});
-const firstTypeBtn = document.querySelector('#typeButtons button');
-highlightButtons(typeContainer, firstTypeBtn);
-
-function changeType(selectedType){
-  options.series=[];
-  chartInstance.updateSeries(options.series);
-  getSelectedSensors().forEach(s=>updateChart(selectedType, s))
 }
-// Функција за ажурирање на график
-function updateChart(type, sensor) {  
-  // console.log(
-  //   options.series.map(s=>s.id)
-  // )
 
-    const filtered = sensorData.filter(d => d.Type === type && d.SensorId === sensor);
-    filtered.sort((a,b) => (a.Year*12 + a.Month) - (b.Year*12 + b.Month));
-
-    const categories = filtered.map(d => `${d.Year}-${String(d.Month).padStart(2,'0')}`);
-    const values = filtered.map(d => {
-    const n = Number(d.MonthlyAvg.toFixed(2));
-    return isNaN(n) ? null : n;
-  });
-    console.log(values);
-    const color = colors.filter(c=>!options.series.map(s=>s.color).includes(c))[0]; // ja naogja prvata slobodna boja
-    // console.log(s);
-
-    if(!options.series.map(s=>s.id).includes(sensor)){
-      options.series.push({
-            name: sensorNames[sensor],
-            id: sensor,
-            data: values,
-            color: color
-          });
-    }else{
-      let idx = options.series.map(s=>s.id).indexOf(sensor);
-      options.series.splice(idx, 1);
+function toggleSensor(sensorId, btn) {
+    const index = selectedSensors.indexOf(sensorId);
+    if (index > -1) {
+        if (selectedSensors.length > 1) {
+            selectedSensors.splice(index, 1);
+            btn.classList.remove('active');
+        }
+    } else if (selectedSensors.length < 3) {
+        selectedSensors.push(sensorId);
+        btn.classList.add('active');
     }
-    
-  const allCategories = Array.from(new Set(
-    options.series.flatMap(s => s.data.map((v,i) => categories[i]))
-  ));
-  options.xaxis.categories = allCategories; // ima problem so kategoriite deka falat podatoci izmegu nekoj meseci moze da se resi dokolku se stavat null vrednosti za tie meseci
-  
-  if(chartInstance) {
-    // chartInstance.updateOptions(options);
-    // chartInstance.updateSeries(options.series);
-    chartInstance.updateOptions({
-      series: options.series,
-      xaxis: { categories: options.xaxis.categories }
+    updateChart();
+}
+
+function updateChart() {
+    let categories = [];
+    let timeframeKey = "";
+    let xRange = undefined;
+    let startZoom = 0;
+    let endZoom = 0;
+
+    if (selectedYear === '2026') {
+        if (selectedTimeframe === 'daily') {
+            categories = Array.from({length: 31}, (_, i) => `Day ${i + 1}`);
+            timeframeKey = "Day";
+            xRange = 7;
+        } else if (selectedTimeframe === 'weekly') {
+            timeframeKey = "Week";
+            xRange = 4; // Покажи 4 недели одеднаш
+
+            // Креирање категории во формат: 2026-01 до 2026-02
+            categories = Array.from({length: 52}, (_, i) => {
+                const weekNum = i + 1;
+                // Груба пресметка на месеци за приказ на оската
+                const startMonth = Math.ceil(weekNum / 4.33);
+                const endMonth = Math.ceil((weekNum + 1) / 4.33);
+                return `${selectedYear}-${String(startMonth).padStart(2, '0')} to ${selectedYear}-${String(endMonth > 12 ? 12 : endMonth).padStart(2, '0')}`;
+            });
+
+            // Зумирај на тековниот месец (денес е јануари според системот)
+            const currentMonth = new Date().getMonth() + 1;
+            startZoom = Math.max(0, (currentMonth - 1) * 4);
+            endZoom = startZoom + 4;
+
+        } else {
+            categories = Array.from({length: 12}, (_, i) => `${selectedYear}-${String(i + 1).padStart(2, '0')}`);
+            timeframeKey = "Month";
+        }
+    } else {
+        categories = Array.from({length: 12}, (_, i) => `${selectedYear}-${String(i + 1).padStart(2, '0')}`);
+        timeframeKey = "Month";
+    }
+
+    const allSeries = selectedSensors.map(sensorId => {
+        const chartData = categories.map((_, index) => {
+            const timeValue = index + 1;
+            const found = sensorData.find(d =>
+                d.SensorId === sensorId &&
+                d.Year == selectedYear &&
+                d.Type === selectedType &&
+                // Оваа линија долу е клучна:
+                (d[timeframeKey] == timeValue)
+            );
+
+            // Проверка за двата можни клучa: Value или MonthlyAvg
+            if (found) {
+                const val = found.Value !== undefined ? found.Value : found.MonthlyAvg;
+                return parseFloat(val).toFixed(2);
+            }
+            return null;
+        });
+        return { name: sensorNames[sensorId] || sensorId, data: chartData };
     });
-    
-  } else {
-    chartInstance = new ApexCharts(document.querySelector("#chart"), options);
-    chartInstance.render();
-  }
-}
 
-// Функција за highlight на избран бутон
+    const options = {
+        series: allSeries,
+        chart: {
+            id: 'main-chart',
+            height: 350,
+            type: 'area',
+            background: 'transparent',
+            foreColor: '#98a2b3',
+            toolbar: {
+                show: true,
+                autoSelected: 'pan',
+                tools: { pan: true, zoom: true, reset: true, download: false }
+            }
+        },
+        colors: ['#ff4d4f', '#00e396', '#008ffb'],
+        stroke: { curve: 'smooth', width: 3 },
+        xaxis: {
+            categories: categories,
+            range: xRange,
+            labels: {
+                rotate: -45,
+                style: { fontSize: '10px' },
+                trim: true
+            }
+        },
+        yaxis: {
+            labels: { formatter: (val) => val ? parseFloat(val).toFixed(2) : "0.00" }
+        },
+        tooltip: { theme: 'dark' },
+        dataLabels: { enabled: false },
+        legend: { position: 'top', labels: { colors: '#fff' } }
+    };
+
+    if (chartInstance) {
+        chartInstance.updateOptions(options);
+    } else {
+        chartInstance = new ApexCharts(document.querySelector("#chart"), options);
+        chartInstance.render();
+    }
+
+    setTimeout(() => {
+        if (selectedTimeframe === 'weekly' && selectedYear === '2026') {
+            ApexCharts.exec('main-chart', 'zoomX', startZoom + 1, endZoom);
+        } else if (xRange) {
+            const lastIndex = categories.length;
+            ApexCharts.exec('main-chart', 'zoomX', lastIndex - xRange + 1, lastIndex);
+        }
+    }, 200);
+}
 function highlightButtons(container, activeBtn) {
-  Array.from(container.children).forEach(btn => btn.classList.remove('active'));
-  activeBtn.classList.add('active');
-}
-
-function getSelectedSensors(){
-    return [...document.querySelectorAll('input[name="location"]:checked')].map(i=>i.id);
+    Array.from(container.children).forEach(btn => btn.classList.remove('active'));
+    activeBtn.classList.add('active');
 }

@@ -6,8 +6,8 @@
 }
 
 body{
-     margin: 0;
-     background: var(--color-gray-900);
+    margin: 0;
+    background: var(--color-gray-900);
 }
 h1, h2, h3{
     font-weight: var(--font-weight-bold);
@@ -31,7 +31,7 @@ h1, h2, h3{
     font: var(--font-outfit);
     font-size: var(--text-lg);
     font-weight: var(--font-weight-bold);
-   
+
 }
 .card h2{
     font: var(--font-outfit);
@@ -54,7 +54,7 @@ h1, h2, h3{
     margin: 0;
 }
 .minMax{
-     display: flex;
+    display: flex;
     flex-direction: column;
     gap: calc(var(--spacing) * 6);
 }
@@ -67,11 +67,11 @@ h1, h2, h3{
     gap: calc(var(--spacing) * 1);
     align-items: center;
     color: var(--color-error-500);
-    
+
     transition: all .3s;
 }
 .bad{
-            background-color: color-mix(in oklab, var(--color-error-500) 15%, transparent);
+    background-color: color-mix(in oklab, var(--color-error-500) 15%, transparent);
 }
 .bad, .bad *{
     color: var(--color-error-500);
@@ -99,7 +99,7 @@ h1, h2, h3{
     grid-column: 1/3;
     display: flex;
     flex-direction: column;
-    gap: calc(var(--spacing) * 6);
+    gap: calc(var(--spacing) * 8);
     height: fit-content;
 }
 .buttonContainer{
@@ -109,7 +109,7 @@ h1, h2, h3{
     gap: calc(var(--spacing) * 3);
     height: fit-content;
 }
-.menuType button, .menuType label{
+.menuType button{
     color: var(--color-gray-300);
     background-color: transparent;
     border: 0;
@@ -126,24 +126,13 @@ h1, h2, h3{
     padding-block: calc(var(--spacing) * 2);
     font-size: var(--text-theme-sm);
     line-height: var(--tw-leading, var(--text-theme-sm--line-height));
+    --tw-font-weight: var(--font-weight-medium);
     font-weight: var(--font-weight-medium);
     transition: all .15s;
 }
-.menuType button:hover, .menuType label:hover{
-  
+.menuType button:hover{
+
     background-color: color-mix(in oklab, var(--color-white) 5%, transparent);
-}
-.menuType input[type="checkbox"]{
-    display: none;
-}
-.menuType input[type="checkbox"]:checked + label{
-    background-color: color-mix(in oklab, var(--color-white) 10%, transparent);
-    color: var(--color-white);
-}
-.menuType .card{
-    display: flex;
-    flex-direction: column;
-    gap: calc(var(--spacing) * 6);
 }
 @media screen and (max-width: 1118px) {
     .menuType{
@@ -152,17 +141,50 @@ h1, h2, h3{
     .plotContainer {
         grid-column: 1 / 13;
     }
-    
 }
-@media screen and (max-width: 420px) {
-    .minMax{
-            grid-column: 1/3;
-        }
+@media screen and (max-width: 340px) {
+
 }
 button.active {
     background-color: color-mix(in oklab, var(--color-white) 10%, transparent);
     color: var(--color-white);
 }
-#chart{
-    min-height: 350px;
+/* Year i periodi css */
+.custom-select {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    border: 1px solid var(--color-gray-800);
+    padding: 8px;
+    border-radius: var(--radius-md);
+    width: 100%;
+    outline: none;
+    cursor: pointer;
+}
+.custom-select option {
+    background: var(--color-gray-900);
+}
+#yearSelect.small-select {
+    width: fit-content !important;
+    min-width: 80px;
+    display: inline-block;
+    padding: 2px 5px !important;
+    height: 30px;
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+/* Контејнерот каде што е насловот Year и самиот селект */
+.plotContainer > h3 {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.apexcharts-toolbar {
+    top: -30px !important; /* Го поместува малку над графикот */
+}
+.apexcharts-toolbar svg {
+    fill: #98a2b3 !important;
+}
+.apexcharts-toolbar svg:hover {
+    fill: #ffffff !important;
 }
