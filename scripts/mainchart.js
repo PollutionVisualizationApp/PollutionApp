@@ -3,7 +3,8 @@ window.addEventListener('load', function () {
     series: [{
       name: "pm10",
       data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
-    }],
+    }
+],
     chart: {
       height: 350,
       type: 'area',
@@ -11,7 +12,7 @@ window.addEventListener('load', function () {
       toolbar: { show: false },
       foreColor: '#98a2b3'
     },
-    colors: ['#ff4d4f'],
+    colors: ['#ff4d4f', "blue"],
     dataLabels: { enabled: false },
     stroke: {
       curve: 'straight',
