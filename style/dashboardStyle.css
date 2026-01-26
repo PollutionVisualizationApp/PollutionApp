@@ -99,7 +99,7 @@ h1, h2, h3{
     grid-column: 1/3;
     display: flex;
     flex-direction: column;
-    gap: calc(var(--spacing) * 8);
+    gap: calc(var(--spacing) * 6);
     height: fit-content;
 }
 .buttonContainer{
@@ -109,7 +109,7 @@ h1, h2, h3{
     gap: calc(var(--spacing) * 3);
     height: fit-content;
 }
-.menuType button{
+.menuType button, .menuType label{
     color: var(--color-gray-300);
     background-color: transparent;
     border: 0;
@@ -126,13 +126,24 @@ h1, h2, h3{
     padding-block: calc(var(--spacing) * 2);
     font-size: var(--text-theme-sm);
     line-height: var(--tw-leading, var(--text-theme-sm--line-height));
-    --tw-font-weight: var(--font-weight-medium);
     font-weight: var(--font-weight-medium);
     transition: all .15s;
 }
-.menuType button:hover{
-
+.menuType button:hover, .menuType label:hover{
+  
     background-color: color-mix(in oklab, var(--color-white) 5%, transparent);
+}
+.menuType input[type="checkbox"]{
+    display: none;
+}
+.menuType input[type="checkbox"]:checked + label{
+    background-color: color-mix(in oklab, var(--color-white) 10%, transparent);
+    color: var(--color-white);
+}
+.menuType .card{
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--spacing) * 6);
 }
 @media screen and (max-width: 1118px) {
     .menuType{
@@ -148,6 +159,9 @@ h1, h2, h3{
 button.active {
     background-color: color-mix(in oklab, var(--color-white) 10%, transparent);
     color: var(--color-white);
+}
+#chart{
+    min-height: 350px;
 }
 /* Year i periodi css */
 .custom-select {
