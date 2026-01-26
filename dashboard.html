@@ -28,19 +28,22 @@
     -->
 
     <div class="grid">
-        <div class="menuType card">
-            <h3>Type of data</h3>
-            <div class="buttonContainer" id="typeButtons">
-            <button data-type="pm10" type="button">pm10</button>
-            <button data-type="pm25" type="button">pm2.5</button>
+        <div class="menuType">
+            <div class="card">
+                <h3>Type of data</h3>
+                <div class="buttonContainer" id="typeButtons">
+                <button data-type="pm10" type="button">pm10</button>
+                <button data-type="pm25" type="button">pm2.5</button>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Sensor</h3>
+                <div class="buttonContainer" id="sensorButtons">
+                    <!-- Копчиња за сензори ќе се креираат динамично со JS -->
+                </div>
             </div>
         </div>
-        <div class="menuType card">
-            <h3>Sensor</h3>
-            <div class="buttonContainer" id="sensorButtons">
-                <!-- Копчиња за сензори ќе се креираат динамично со JS -->
-            </div>
-        </div>
+        
         <div class="plotContainer">
             <div class="plotCard card">
                  <h3>Todays Data</h3>
