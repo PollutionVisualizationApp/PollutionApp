@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-
+    <script src="scripts/dailyClass.js" defer></script>
     <script src="scripts/mainchart.js" defer></script>
 </head>
 <body>
@@ -42,23 +42,34 @@ line-height: var(--tw-leading, var(--text-lg--line-height));
                     <!-- Копчиња за сензори ќе се креираат динамично со JS -->
                 </div>
             </div>
-            <div id="timeframeSection" class="card" style="display: none;">
-                <h3>Timeframe</h3>
+            <div id="yearSelection" class="card">
+                <!-- <h3>Timeframe</h3>
                 <select id="timeframeSelect" class="custom-select small-select">
                     <option value="monthly" selected>Monthly</option>
                     <option value="weekly">Weekly</option>
                     <option value="daily">Daily</option>
+                </select> -->
+                <h3>Year</h3>
+                <select id="yearSelect" class="custom-select small-select">
+                    <option value="2024">2024</option>
+                    <option value="2025" selected>2025</option>
+                    <option value="2026">2026</option>
                 </select>
             </div>
         </div>
         
         <div class="plotContainer">
-            <h3>Year</h3>
-        <select id="yearSelect" class="custom-select small-select">
-            <option value="2024">2024</option>
-            <option value="2025" selected>2025</option>
-            <option value="2026">2026</option>
-        </select>
+            <div class="filterCard card">
+                <h3>Timeframe</h3>
+                <div class="timeframeContainer">
+                    <input type="radio" name="timeframe" value="daily" id="daily" >
+                    <label for="daily">Daily</label>
+                    <input type="radio" name="timeframe" value="weekly" id="weekly">
+                    <label for="weekly">Weekly</label>
+                    <input type="radio" name="timeframe" value="monthly" id="monthly" checked>
+                    <label for="monthly">Monthly</label>
+                </div>
+            </div>
             <div class="plotCard card">
                  <h3>Todays Data</h3>
                  <p class="subHead">Hourly data</p>
@@ -66,9 +77,9 @@ line-height: var(--tw-leading, var(--text-lg--line-height));
             </div>
             <div class="card minMax">
                 <h3>Todays Max</h3>
-                <p class="subHead">pm10</p>
+                <p class="subHead typeMinMax">pm10</p>
                 <span class="currentValue">
-                    <h2>4.86</h2>
+                    <h2 id="max">4.86</h2>
                     <div class="compYesterday">
                         <p class="subHead">1d ago</p>
                         <div class="percent bad">
@@ -79,9 +90,9 @@ line-height: var(--tw-leading, var(--text-lg--line-height));
         </div>
         <div class="card minMax">
             <h3>Todays Min</h3>
-            <p class="subHead">pm10</p>
+            <p class="subHead typeMinMax">pm10</p>
             <span class="currentValue">
-                    <h2>2.50</h2>
+                    <h2 id="min">2.50</h2>
                     <div class="compYesterday">
                         <p class="subHead">1d ago</p>
                         <div class="percent good">
