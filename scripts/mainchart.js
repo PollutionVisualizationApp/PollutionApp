@@ -128,16 +128,9 @@ function updateChart() {
     let instance;
     
         if (selectedTimeframe === 'daily') {
-            // categories = Array.from({length: 31}, (_, i) => `Day ${i + 1}`);
-            // timeframeKey = "Day";
-            // xRange = 7;
-            
-            // timeframeKey = "Daily";
 
             instance = new DailyData(chartInstance);
             return;
-            // categories = instance.getXlabels();
-            // xRange=24;
 
         } else if (selectedTimeframe === 'weekly') {
             timeframeKey = "Week";
@@ -162,7 +155,7 @@ function updateChart() {
             categories = Array.from({length: 12}, (_, i) => `${selectedYear}-${String(i + 1).padStart(2, '0')}`);
             timeframeKey = "Month";
         }
-
+        console.log(categories);
     const allSeries = selectedSensors.map(sensorId => {
         let lastValue=null;
         const chartData = categories.map((_, index) => {
@@ -178,14 +171,17 @@ function updateChart() {
             // Проверка за двата можни клучa: Value или MonthlyAvg
             if (found) {
                 const val = found.Value !== undefined ? found.Value : found.MonthlyAvg;
-                lastValue = val; 
-                return parseFloat(val).toFixed(2);
+                const finalVal = (val!=undefined&&val!=NaN)? val: lastValue;
+                lastValue = finalVal; 
+                return parseFloat(finalVal).toFixed(2);
                 
             }
             return lastValue; //ffill
         });
         return { name: sensorNames[sensorId] || sensorId, data: chartData };
     });
+
+    console.log(allSeries);
 
     options.series = allSeries;
     options.xaxis.categories = categories;

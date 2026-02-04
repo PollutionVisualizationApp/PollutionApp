@@ -23,7 +23,7 @@ class DailyData{
 
     getDates(){
             const now = new Date();
-            now.setHours(now.getHours() - 1);
+            // now.setHours(now.getHours() + 1);
             now.setMinutes(0, 0, 0);
 
             // 24 hours before
@@ -47,7 +47,7 @@ class DailyData{
         const start = new Date(prev);
         const end = new Date(curr);
 
-        const diffMs = end - start;
+        const diffMs = Math.abs(end - start);
         const diffHours = diffMs / (1000 * 60 * 60);
 
         // console.log(diffHours);
@@ -66,21 +66,25 @@ class DailyData{
             if(this.hourDiff(previousHour,a.index)>1){
                 //  console.log(previousHour+" "+a.index);
                 // console.log(a);
+                let tmp = this.hourDiff(previousHour,a.index);
                 const [baseHour] = previousHour.split('T')[1].split(':').map(Number);
 
-                for (let i = 1; i < this.hourDiff(previousHour,a.index); i++) {
                 const obj = { ...a };
-
+                for (let i = 1; i < tmp; i++) {
+                
                     const newHour = (baseHour + i) % 24; 
-                    // console.log(newHour);
+                    // console.log(obj);
                     obj.stamp = String(newHour).padStart(2, '0') + ':00';
-                    obj.index = obj.index.split('T')[0]+"T"+obj.hour;
+                    obj.index = obj.index.split('T')[0]+"T"+obj.stamp;
                     newArr.push(obj);
-                    previousHour = obj.index; 
+                    
+                    // console.log("PREV: "+previousHour); 
                 }
-             }else{
-               previousHour = a.index; 
+                // previousHour = obj.index;
              }
+            //  else{
+               previousHour = a.index; 
+            //  }
 
             newArr.push(a);
             
@@ -91,38 +95,54 @@ class DailyData{
     }
 
     getAveragePerHour(data, id) {
+    const averageByHour = data.reduce((acc, item) => {
+        const date = new Date(item.stamp);
 
-        let averageByHour = data.reduce((acc, item) => {
-      
+        // console.log('stamp:', item.stamp);
+        // console.log('before:', date.toISOString());
+        const minutes = date.getMinutes();
+        date.setMinutes(0, 0, 0);
 
-        const hour = item.stamp.split('T')[1].split(':')[0]+":00";
-        const stamp = item.stamp.split('T')[0]+"T"+hour;
-        
-        // console.log(hour);
-        if (!acc[stamp]) {
-        acc[stamp] = { sensorId: id, stamp: `${hour}`, index: `${stamp}`, sum: 0, count: 0, value:0 };
+        if (minutes >= 30) {
+        date.setHours(date.getHours() + 1);
         }
-        
-        acc[stamp].sum += parseFloat(item.value);
+        // console.log('after :', date.toISOString());
+
+        const stamp =
+        date.getFullYear() + '-' +
+        String(date.getMonth() + 1).padStart(2, '0') + '-' +
+        String(date.getDate()).padStart(2, '0') + 'T' +
+        String(date.getHours()).padStart(2, '0') + ':00';
+
+        const hour = stamp.slice(11);
+        console.log(item.stamp+" "+stamp);
+        if (!acc[stamp]) {
+        acc[stamp] = {
+            sensorId: id,
+            stamp: hour,
+            index: stamp,
+            sum: 0,
+            count: 0
+        };
+        }
+
+        acc[stamp].sum += Number(item.value);
         acc[stamp].count += 1;
         return acc;
-        }, {});
-   
-        // console.log(averageByHour);
-    
-        const arr = Object.keys(averageByHour)
-        .sort((a, b) => Number(a) - Number(b))
+    }, {});
+
+    const arr = Object.keys(averageByHour)
+        .sort((a, b) => new Date(a) - new Date(b))
         .map(key => {
-            const data = averageByHour[key]; 
-            return {
-            ...data,
+        const d = averageByHour[key];
+        return {
+            ...d,
             hour: key,
-            value: (data.sum / data.count).toFixed(2)
-            };
+            value: Number((d.sum / d.count).toFixed(2))
+        };
         });
 
-        return this.fillGaps(arr);
-
+    return this.fillGaps(arr);
     }
 
     initChart(){
@@ -132,9 +152,14 @@ class DailyData{
             fetch(`https://skopje.pulse.eco/rest/dataRaw?sensorId=${s}&type=${selectedType}&&from=${dates.yesterday}&to=${dates.now}`)
         .then(response => response.json())
         .then(data => {
-                this.sensorData.push(this.getAveragePerHour(data, s));
+                let avgData = this.getAveragePerHour(data, s);
+                console.log(data);
+                if(avgData.length>24){
+                 avgData = avgData.slice(avgData.length-24);
+                }
+                this.sensorData.push(avgData);
                 // console.log(data);
-                // console.log(this.getAveragePerHour(data, s));
+                // console.log(avgData);
                 this.showChart();
                 this.setMinMax();
         });
@@ -147,13 +172,13 @@ class DailyData{
         const series = this.getSeries();
         const xLabels = this.getXlabels();
         
-        console.log(options.xaxis);
-        console.log(xLabels);
+        // console.log(options.xaxis);
+        // console.log(xLabels);
         
         options.series = series,
         options.xaxis.categories = xLabels;
         // options.xaxis.range = 24;
-        console.log(options.xaxis);
+        // console.log(options.xaxis);
         this.chart.updateOptions(options);
     }
 
