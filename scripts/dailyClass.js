@@ -147,12 +147,13 @@ class DailyData{
         const series = this.getSeries();
         const xLabels = this.getXlabels();
         
-        // console.log(series);
-        // console.log(xLabels);
+        console.log(options.xaxis);
+        console.log(xLabels);
         
         options.series = series,
         options.xaxis.categories = xLabels;
-        options.xaxis.range = 24;
+        // options.xaxis.range = 24;
+        console.log(options.xaxis);
         this.chart.updateOptions(options);
     }
 

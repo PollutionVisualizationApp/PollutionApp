@@ -13,6 +13,11 @@ const options = {
             type: 'area',
             background: 'transparent',
             foreColor: '#98a2b3',
+            zoom: {
+                enabled: true,
+                type: 'x', // or 'xy'
+                autoScaleYaxis: true
+            },
             toolbar: {
                 show: true,
                 autoSelected: 'pan',
@@ -131,8 +136,8 @@ function updateChart() {
 
             instance = new DailyData(chartInstance);
             return;
-            categories = instance.getXlabels();
-            xRange=24;
+            // categories = instance.getXlabels();
+            // xRange=24;
 
         } else if (selectedTimeframe === 'weekly') {
             timeframeKey = "Week";
