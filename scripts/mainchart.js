@@ -48,7 +48,6 @@ const options = {
 
 const sensorNames = {
     "3568aa20-235a-408c-861b-279c9f4d7709": "Vodno",
-    "1002": "MOEPP Miladinovci",
     "6c6a9ef6-85f9-45c0-9e01-0c9d2fb87bc2": "Capitol Mall",
     "fef6bc74-bf86-4874-9531-51b033580379": "Taftalidze 2",
     "8defa36a-62ca-448a-9ffb-5a2848c2dfa0": "FINKI/ZOO",
