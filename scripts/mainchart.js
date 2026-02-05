@@ -38,6 +38,8 @@ const options = {
         yaxis: {
             // max:200,
             min: 0,
+            // tickAmount: 2,
+            forceNiceScale: false,
             labels: { formatter: (val) => val ? parseFloat(val).toFixed(2) : "0.00" }
         },
         tooltip: { theme: 'dark' },
@@ -128,7 +130,7 @@ function updateChart() {
     let instance;
     
         if (selectedTimeframe === 'daily') {
-
+            options.xaxis.range = undefined;
             instance = new DailyData(chartInstance);
             return;
 

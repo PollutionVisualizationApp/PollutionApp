@@ -105,6 +105,9 @@
     --z-index-99999: 99999;
     --z-index-999999: 999999;
     --tw-border-style: 1px solid var(--color-gray-800);
+    --first:#ff4d4f;
+    --second: #00e396;
+    --third: #008ffb;
 }
 /* @font-face {
     font-family: 'Outfit';

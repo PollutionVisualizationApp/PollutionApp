@@ -153,7 +153,7 @@ class DailyData{
         .then(response => response.json())
         .then(data => {
                 let avgData = this.getAveragePerHour(data, s);
-                console.log(data);
+                // console.log(data);
                 if(avgData.length>24){
                  avgData = avgData.slice(avgData.length-24);
                 }
@@ -235,11 +235,35 @@ class DailyData{
 
        types.forEach(t=>t.innerText=selectedType);
 
-
        this.countUpFloat(minElement, sMin, min);
        this.countUpFloat(maxElement, sMax, max);
-
    
+       this.showMinMaxEachSensor()
     }
-       
+    showMinMaxEachSensor(){ 
+        let parentMax = document.querySelectorAll("#maxDiv .values")[0];
+        let parentMin = document.querySelectorAll("#minDiv .values")[0];
+        parentMax.innerHTML="";
+        parentMin.innerHTML="";
+        let arrAll = this.sensorData.flat(1)
+        
+        selectedSensors.forEach(key=>{
+            
+            let e = arrAll.filter(m=>m.sensorId==key);
+
+            let arr = e.map(m=>m.value);
+            let min = Math.min(...arr);
+            let max = Math.max(...arr);
+            
+            let div = document.createElement('div');
+            div.classList.add("minMaxInfo");
+            div.innerHTML = max;
+            parentMax.append(div);
+
+            let div1 = document.createElement('div');
+            div1.classList.add("minMaxInfo");
+            div1.innerHTML = min;
+            parentMin.append(div1);
+        });
+    }
 }
