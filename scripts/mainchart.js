@@ -12,7 +12,7 @@ const options = {
             height: 350,
             type: 'area',
             background: 'transparent',
-            foreColor: '#98a2b3',
+            foreColor: 'var(--text-color-light-2)',
             zoom: {
                 enabled: true,
                 type: 'x', // or 'xy'
@@ -22,13 +22,21 @@ const options = {
                 show: true,
                 autoSelected: 'pan',
                 tools: { pan: true, zoom: true, reset: true, download: false }
+            },
+            animations: {
+                enabled: true,
+                speed: 300,
+                animateGradually: {
+                enabled: true,
+                delay: 150
+                }
             }
         },
         colors: ['#ff4d4f', '#00e396', '#008ffb'],
         stroke: { curve: 'smooth', width: 3 },
         xaxis: {
-            categories: {},
-            range: {},
+            categories: [],
+            range: [],
             labels: {
                 rotate: -45,
                 style: { fontSize: '10px' },
@@ -44,7 +52,7 @@ const options = {
         },
         tooltip: { theme: 'dark' },
         dataLabels: { enabled: false },
-        legend: { position: 'top', labels: { colors: '#fff' } }
+        legend: { position: 'top', labels: { colors: 'var(--text-color)' } }
     };
 
 
@@ -191,7 +199,7 @@ function updateChart() {
 
     if (chartInstance) {
         // chartInstance.updateOptions({series:options.series, xaxis: options.xaxis});
-        chartInstance.updateOptions(options);
+        chartInstance.updateOptions(options, true, true);
     } else {
         chartInstance = new ApexCharts(document.querySelector("#chart"), options);
         chartInstance.render();

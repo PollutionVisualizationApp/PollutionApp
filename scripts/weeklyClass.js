@@ -55,16 +55,29 @@ class WeeklyData {
         let dates = this.getDates();
         this.sensorData = [];
 
-        selectedSensors.forEach(s => {
-            fetch(`https://skopje.pulse.eco/rest/dataRaw?sensorId=${s}&type=${selectedType}&from=${dates.from}&to=${dates.now}`)
-                .then(response => response.json())
-                .then(data => {
-                    let avgData = this.getAveragePerDay(data, s);
-                    this.sensorData.push(avgData);
-                    this.showChart();
-                    this.setMinMax();
-                });
+        // selectedSensors.forEach(s => {
+        //     fetch(`https://skopje.pulse.eco/rest/dataRaw?sensorId=${s}&type=${selectedType}&from=${dates.from}&to=${dates.now}`)
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             let avgData = this.getAveragePerDay(data, s);
+        //             this.sensorData.push(avgData);
+        //             this.showChart();
+        //             this.setMinMax();
+        //         });
+        // });
+
+        const requests = selectedSensors.map(s =>
+        fetch(`https://skopje.pulse.eco/rest/dataRaw?sensorId=${s}&type=${selectedType}&from=${dates.from}&to=${dates.now}`)
+            .then(res => res.json())
+            .then(data => this.getAveragePerDay(data, s))
+        );
+
+        Promise.all(requests).then(results => {
+        this.sensorData = results;   
+        this.showChart();            
+        this.setMinMax();
         });
+
     }
 
     showChart() {
@@ -76,7 +89,7 @@ class WeeklyData {
         // Ресетирај опсег за да се видат сите 7 дена убаво
         options.xaxis.range = undefined;
 
-        this.chart.updateOptions(options);
+        this.chart.updateOptions(options, true, true);
     }
 
     getSeries() {
@@ -94,6 +107,8 @@ class WeeklyData {
         let minElement = document.getElementById("min");
         let maxElement = document.getElementById("max");
         let types = [...document.getElementsByClassName("typeMinMax")];
+        let sMin = parseFloat(minElement.innerText);
+        let sMax = parseFloat(maxElement.innerText);
 
         let arr = this.sensorData.flat(1).map(m => m.value);
         if (arr.length === 0) return;
@@ -104,7 +119,10 @@ class WeeklyData {
         types.forEach(t => t.innerText = selectedType);
 
         // Користи ја истата анимација од dailyClass ако е достапна глобално или преку прототип
-        minElement.innerText = min.toFixed(2);
-        maxElement.innerText = max.toFixed(2);
+
+        DailyData.countUpFloat(minElement, sMin, min);
+        DailyData.countUpFloat(maxElement, sMax, max);
+
+        DailyData.showMinMaxEachSensor(this.sensorData);
     }
 }

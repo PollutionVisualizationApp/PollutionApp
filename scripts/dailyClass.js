@@ -147,23 +147,26 @@ class DailyData{
 
     initChart(){
         let dates = this.getDates();
-        // console.log(selectedType);
-        selectedSensors.forEach(s=>{
-            fetch(`https://skopje.pulse.eco/rest/dataRaw?sensorId=${s}&type=${selectedType}&&from=${dates.yesterday}&to=${dates.now}`)
-        .then(response => response.json())
-        .then(data => {
-                let avgData = this.getAveragePerHour(data, s);
-                // console.log(data);
-                if(avgData.length>24){
-                 avgData = avgData.slice(avgData.length-24);
-                }
-                this.sensorData.push(avgData);
-                // console.log(data);
-                // console.log(avgData);
-                this.showChart();
-                this.setMinMax();
+
+        const requests = selectedSensors.map(s =>
+        fetch(`https://skopje.pulse.eco/rest/dataRaw?sensorId=${s}&type=${selectedType}&from=${dates.yesterday}&to=${dates.now}`)
+            .then(res => res.json())
+            .then(data => {
+            let avgData = this.getAveragePerHour(data, s);
+
+            if (avgData.length > 24) {
+                avgData = avgData.slice(avgData.length - 24);
+            }
+
+            return avgData; // ⬅️ return result
+            })
+        );
+
+        Promise.all(requests).then(results => {
+        this.sensorData = results;  
+        this.showChart();           
+        this.setMinMax();
         });
-        })
         
 
     }
@@ -179,7 +182,7 @@ class DailyData{
         options.xaxis.categories = xLabels;
         // options.xaxis.range = 24;
         // console.log(options.xaxis);
-        this.chart.updateOptions(options);
+        this.chart.updateOptions(options, true, true);
     }
 
     getSeries(){
@@ -208,7 +211,7 @@ class DailyData{
  
         return arr;
     }
-    countUpFloat(el, start, end, duration = 700, decimals = 2) {
+    static countUpFloat(el, start, end, duration = 700, decimals = 2) {
         let startTime = null;
 
         function animate(ts) {
@@ -235,17 +238,17 @@ class DailyData{
 
        types.forEach(t=>t.innerText=selectedType);
 
-       this.countUpFloat(minElement, sMin, min);
-       this.countUpFloat(maxElement, sMax, max);
+       DailyData.countUpFloat(minElement, sMin, min);
+       DailyData.countUpFloat(maxElement, sMax, max);
    
-       this.showMinMaxEachSensor()
+       DailyData.showMinMaxEachSensor(this.sensorData)
     }
-    showMinMaxEachSensor(){ 
+    static showMinMaxEachSensor(sensorData){ 
         let parentMax = document.querySelectorAll("#maxDiv .values")[0];
         let parentMin = document.querySelectorAll("#minDiv .values")[0];
         parentMax.innerHTML="";
         parentMin.innerHTML="";
-        let arrAll = this.sensorData.flat(1)
+        let arrAll = sensorData.flat(1)
         
         selectedSensors.forEach(key=>{
             
