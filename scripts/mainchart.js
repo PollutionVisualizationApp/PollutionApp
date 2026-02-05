@@ -50,7 +50,6 @@ const options = {
 
 const sensorNames = {
     "3568aa20-235a-408c-861b-279c9f4d7709": "Vodno",
-    "1002": "MOEPP Miladinovci",
     "6c6a9ef6-85f9-45c0-9e01-0c9d2fb87bc2": "Capitol Mall",
     "fef6bc74-bf86-4874-9531-51b033580379": "Taftalidze 2",
     "8defa36a-62ca-448a-9ffb-5a2848c2dfa0": "FINKI/ZOO",
@@ -135,23 +134,24 @@ function updateChart() {
             return;
 
         } else if (selectedTimeframe === 'weekly') {
-            timeframeKey = "Week";
-            xRange = 4; // Покажи 4 недели одеднаш
-
-            // Креирање категории во формат: 2026-01 до 2026-02
-            categories = Array.from({length: 52}, (_, i) => {
-                const weekNum = i + 1;
-                // Груба пресметка на месеци за приказ на оската
-                const startMonth = Math.ceil(weekNum / 4.33);
-                const endMonth = Math.ceil((weekNum + 1) / 4.33);
-                return `${selectedYear}-${String(startMonth).padStart(2, '0')} to ${selectedYear}-${String(endMonth > 12 ? 12 : endMonth).padStart(2, '0')}`;
-            });
-
-            // Зумирај на тековниот месец (денес е јануари според системот)
-            const currentMonth = new Date().getMonth() + 1;
-            startZoom = Math.max(0, (currentMonth - 1) * 4);
-            endZoom = startZoom + 4;
-
+            // timeframeKey = "Week";
+            // xRange = 4; // Покажи 4 недели одеднаш
+            //
+            // // Креирање категории во формат: 2026-01 до 2026-02
+            // categories = Array.from({length: 52}, (_, i) => {
+            //     const weekNum = i + 1;
+            //     // Груба пресметка на месеци за приказ на оската
+            //     const startMonth = Math.ceil(weekNum / 4.33);
+            //     const endMonth = Math.ceil((weekNum + 1) / 4.33);
+            //     return `${selectedYear}-${String(startMonth).padStart(2, '0')} to ${selectedYear}-${String(endMonth > 12 ? 12 : endMonth).padStart(2, '0')}`;
+            // });
+            //
+            // // Зумирај на тековниот месец (денес е јануари според системот)
+            // const currentMonth = new Date().getMonth() + 1;
+            // startZoom = Math.max(0, (currentMonth - 1) * 4);
+            // endZoom = startZoom + 4;
+            new WeeklyData(chartInstance);
+            return;
         } else {
 
             categories = Array.from({length: 12}, (_, i) => `${selectedYear}-${String(i + 1).padStart(2, '0')}`);
