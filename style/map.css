@@ -1,0 +1,147 @@
+#map-section {
+    background-color: var(--black-color);
+    position: relative;
+    z-index: 10;
+    padding-top: 60px; /* ОВА Е ГАПОТ ШТО ГО ПОБАРА */
+    padding-bottom: 50px;
+}
+
+#map {
+    height: 80vh;
+    width: 90%; /* Малку потесна за подобар изглед */
+    margin: 0 auto;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    z-index: 1;
+}
+
+/* ИНТЕРЕСНИ МАРКЕРИ */
+.custom-icon-marker {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ff4444;
+    width: 45px !important;
+    height: 45px !important;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    border: 3px solid white;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.custom-icon-marker:hover {
+    transform: rotate(-45deg) scale(1.2); /* Ефект на зголемување при hover */
+    background-color: #ff0000;
+}
+
+.custom-icon-marker i {
+    transform: rotate(45deg);
+    color: white;
+    font-size: 22px;
+}
+
+.map-controls {
+    position: absolute;
+    top: 80px;
+    right: 7%;
+    z-index: 1000;
+}
+
+.map-btn {
+    padding: 10px 15px;
+    background: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+.custom-icon-marker {
+    box-shadow: 0 0 15px rgba(255, 68, 68, 0.6); /* Црвен сјај околу иконата */
+}
+/* Контејнерот на Tooltip-от */
+.leaflet-tooltip.custom-leaflet-tooltip {
+    background: white;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    padding: 15px;
+    width: 250px;
+    font-family: 'Montserrat', sans-serif;
+    white-space: normal !important; /* Дозволува нов ред за текстот */
+    height: auto !important;
+}
+
+/* Стрелката под Tooltip-от */
+.leaflet-tooltip-top.custom-leaflet-tooltip::before {
+    border-top-color: white;
+}
+
+.map-popup-card {
+    text-align: center;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.advice-box {
+    font-size: 11px;
+    line-height: 1.4;
+    margin: 8px 0;
+    padding: 0 5px;
+    display: block; /* Осигурува дека е блок елемент */
+    word-wrap: break-word; /* Ги крши долгите зборови */
+}
+.popup-header strong {
+    font-size: 16px;
+    display: block;
+}
+
+.popup-header p {
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.popup-value {
+    margin: 10px 0;
+}
+
+.popup-value .main-val {
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.popup-minmax {
+    font-size: 10px;
+    color: #999;
+}
+
+.mini-graph {
+    height: 40px;
+    margin-top: 10px;
+    background: linear-gradient(90deg, #eee 25%, #ddd 50%, #eee 75%); /* Привремен графикон */
+    border-radius: 4px;
+}
+
+.click-info {
+    font-size: 9px;
+    margin-top: 8px;
+    color: #3498db;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+@keyframes pulse-red {
+    0% { box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(255, 68, 68, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 68, 68, 0); }
+}
+
+.critical-pollution {
+    animation: pulse-red 2s infinite;
+    border: 3px solid #000 !important;
+}

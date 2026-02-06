@@ -76,16 +76,32 @@ function initDashboard() {
     const sensorContainer = document.getElementById('sensorButtons');
     const sensors = [...new Set(sensorData.map(d => d.SensorId))];
 
+    let requestedSensorId = getSensorFromUrl();
+    sensorContainer.innerHTML = '';
+    selectedSensors = []; // Ресетирај за почеток
+
     sensors.forEach(sensor => {
         const btn = document.createElement('button');
         btn.textContent = sensorNames[sensor] || sensor;
         btn.dataset.sensor = sensor;
         btn.addEventListener('click', () => toggleSensor(sensor, btn));
         sensorContainer.appendChild(btn);
+
+        //Potrebno za mapata koga kje klikneme na odreden senzor
+        if (requestedSensorId && sensor == requestedSensorId) {
+            selectedSensors = [sensor];
+            btn.classList.add('active');
+        }
     });
 
-    selectedSensors = [sensors[0]];
-    if (sensorContainer.children[0]) sensorContainer.children[0].classList.add('active');
+    // Ако нема параметар во URL или ако тој сензор не постои во податоците,
+    // тогаш селектирај го првиот како default
+    if (selectedSensors.length === 0 && sensors.length > 0) {
+        selectedSensors = [sensors[0]];
+        if (sensorContainer.children[0]) sensorContainer.children[0].classList.add('active');
+    }
+    // selectedSensors = [sensors[0]];
+    // if (sensorContainer.children[0]) sensorContainer.children[0].classList.add('active');
 
     setupFilters();
     updateChart();
@@ -171,7 +187,7 @@ function updateChart() {
         const chartData = categories.map((_, index) => {
             const timeValue = index + 1;
             const found = sensorData.find(d =>
-                d.SensorId === sensorId &&
+                d.SensorId == sensorId &&
                 d.Year == selectedYear &&
                 d.Type === selectedType &&
                 // Оваа линија долу е клучна:
@@ -217,4 +233,9 @@ function updateChart() {
 function highlightButtons(container, activeBtn) {
     Array.from(container.children).forEach(btn => btn.classList.remove('active'));
     activeBtn.classList.add('active');
+}
+//Koga kje klikneme senzor od mapata ne nosi do soodvetniot senzor vo dashboardot
+function getSensorFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('sensor'); // Враќа напр. "1000" или null
 }

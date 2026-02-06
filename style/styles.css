@@ -360,3 +360,6 @@ a {
 #slika-logo{
     color: white;
 }
+html {
+    scroll-behavior: smooth;
+}
