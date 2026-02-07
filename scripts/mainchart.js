@@ -151,7 +151,8 @@ function updateChart() {
     let startZoom = 0;
     let endZoom = 0;
     let instance;
-    
+    // ПРВО: Ресетирај го UI-то за соодветниот timeframe
+    resetMinMaxUI(selectedTimeframe);
         if (selectedTimeframe === 'daily') {
             options.xaxis.range = undefined;
             instance = new DailyData(chartInstance);
@@ -198,9 +199,9 @@ function updateChart() {
             if (found) {
                 const val = found.Value !== undefined ? found.Value : found.MonthlyAvg;
                 const finalVal = (val!=undefined&&val!=NaN)? val: lastValue;
-                lastValue = finalVal; 
+                lastValue = finalVal;
                 return parseFloat(finalVal).toFixed(2);
-                
+
             }
             return lastValue; //ffill
         });
@@ -208,6 +209,8 @@ function updateChart() {
     });
 
     console.log(allSeries);
+
+    updateMinMaxStats(allSeries);
 
     options.series = allSeries;
     options.xaxis.categories = categories;
@@ -238,4 +241,56 @@ function highlightButtons(container, activeBtn) {
 function getSensorFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('sensor'); // Враќа напр. "1000" или null
+}
+
+//MinMax za godisnite statistiki
+function updateMinMaxStats(allSeries) {
+    let minElement = document.getElementById("min");
+    let maxElement = document.getElementById("max");
+    let parentMax = document.querySelectorAll("#maxDiv .values")[0];
+    let parentMin = document.querySelectorAll("#minDiv .values")[0];
+
+    let allGlobalValues = [];
+
+    allSeries.forEach(series => {
+        // Филтрирај ги само бројките (избегни null)
+        const numericData = series.data.map(Number).filter(n => !isNaN(n));
+
+        if (numericData.length > 0) {
+            const sensorMax = Math.max(...numericData);
+            const sensorMin = Math.min(...numericData);
+            allGlobalValues.push(...numericData);
+
+            // Креирај меурче за секој сензор (како во Daily)
+            let maxDiv = document.createElement('div');
+            maxDiv.className = "minMaxInfo";
+            maxDiv.innerHTML = sensorMax.toFixed(2);
+            parentMax.append(maxDiv);
+
+            let minDiv = document.createElement('div');
+            minDiv.className = "minMaxInfo";
+            minDiv.innerHTML = sensorMin.toFixed(2);
+            parentMin.append(minDiv);
+        }
+    });
+
+    // Ажурирај ги главните големи бројки
+    if (allGlobalValues.length > 0) {
+        maxElement.textContent = Math.max(...allGlobalValues).toFixed(2);
+        minElement.textContent = Math.min(...allGlobalValues).toFixed(2);
+    }
+}
+// Koga ke se odbere weekly ili daily da se resetira min i max
+function resetMinMaxUI(timeframe) {
+    const titles = document.querySelectorAll('.minMax h3');
+    const titlePrefix = timeframe === 'monthly' ? 'Yearly' : (timeframe === 'weekly' ? 'Weekly' : 'Todays');
+
+    if (titles[0]) titles[0].textContent = `${titlePrefix} Max`;
+    if (titles[1]) titles[1].textContent = `${titlePrefix} Min`;
+
+    // Ги чистиме малите меурчиња од претходните пресметки
+    document.querySelectorAll("#maxDiv .values, #minDiv .values").forEach(v => v.innerHTML = "");
+
+    // Го ажурираме типот (pm10/pm25)
+    document.querySelectorAll('.typeMinMax').forEach(t => t.innerText = selectedType);
 }
