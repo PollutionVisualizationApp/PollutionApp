@@ -294,20 +294,3 @@ button.active {
 .minMaxInfo:nth-child(3)::before{
      background-color: var(--third);
 }
-#themeCheckBox{
-    display: none;
-}
-.circleButton{
-    width: calc(var(--spacing) * 11);
-    height: calc(var(--spacing) * 11);
-    border: var(--tw-border-style);
-    border-radius: calc(infinity * 1px);
-    background: var(--card-background);
-    font-size: var(--text-lg);
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    flex-wrap: wrap;
-    margin: calc(var(--spacing) * 6);;
-}

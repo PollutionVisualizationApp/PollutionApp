@@ -170,9 +170,15 @@ class DailyData{
         
 
     }
-    
+    findDataLongestSeries(series){
+        const maxLen = series[0];
+
+        series.forEach(s=>  maxLen = s.data.length > maxLen.data.length?s:maxLen);
+        return maxLen;
+    }
     showChart(){
         const series = this.getSeries();
+        // const longestSeries(series);
         const xLabels = this.getXlabels();
         
         // console.log(options.xaxis);
@@ -197,19 +203,29 @@ class DailyData{
 
             obj.name= sensorNames[ss];
             obj.data = this.sensorData.flat(1).filter(s => s.sensorId == ss).map(d=>d["value"]);
-
+            if(obj.data.length<24){
+                obj.data = this.normalizeSeries(obj.data, 24);
+            }
             // console.log(obj);
             arr.push(obj);
         })
 
         return arr;
     }
-    getXlabels(){
-        let arr = this.sensorData[0]
-        // .filter(s => s.sensorId == selectedSensors[0])
-        .map(d=>d["stamp"]);
- 
-        return arr;
+
+    getXlabels() {
+    const labels = [];
+    const now = new Date();
+
+    for (let i = 23; i >= 0; i--) {
+        const d = new Date(now);
+        d.setHours(now.getHours() - i);
+
+        const hour = d.getHours().toString().padStart(2, '0');
+        labels.push(`${hour}:00`);
+    }
+
+    return labels;
     }
     static countUpFloat(el, start, end, duration = 700, decimals = 2) {
         let startTime = null;
@@ -267,6 +283,17 @@ class DailyData{
             div1.classList.add("minMaxInfo");
             div1.innerHTML = min;
             parentMin.append(div1);
+        });
+    }
+
+    normalizeSeries(series, targetLength) {
+        let lastValue = 0;
+        return Array.from({ length: targetLength }, (_, i) => {
+            if (series[i] != null) {
+            lastValue = series[i];
+            return series[i];
+            }
+            return lastValue ?? 0;
         });
     }
 }

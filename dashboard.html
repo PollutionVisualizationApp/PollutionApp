@@ -12,6 +12,7 @@
     <script src="scripts/dailyClass.js" defer></script>
     <script src="scripts/mainchart.js" defer></script>
     <script src="scripts/theme.js" defer></script>
+    <title>Dashboard</title>
 </head>
 <body>
 <!--
@@ -77,8 +78,8 @@ line-height: var(--tw-leading, var(--text-lg--line-height));
                 </div>
             </div>
             <div class="plotCard card">
-                 <h3>Todays Data</h3>
-                 <p class="subHead">Hourly data</p>
+                 <h3 id="titleChart" >Todays Data</h3>
+                 <p class="subHead" id="subTitleChart">Hourly data</p>
                 <div id="chart"></div>
             </div>
             <div class="card minMax">

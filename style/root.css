@@ -108,6 +108,7 @@
     --first:#ff4d4f;
     --second: #00e396;
     --third: #008ffb;
+    
     --background-color: var(--color-gray-900);
     --text-color: var(--color-white);
     --text-color-light: var(--color-gray-300);
@@ -132,6 +133,28 @@ body.light{
     --tw-border-style: 1px solid var(--border-color);
     --color-type: var(--color-gray-100);
     --color-type-text: var(--color-gray-300);
+    --height-width-current: "200";
+
+}
+
+#themeCheckBox{
+    display: none;
+}
+.circleButton{
+    width: calc(var(--spacing) * 11);
+    height: calc(var(--spacing) * 11);
+    border: var(--tw-border-style);
+    border-color: var(--color-gray-800);
+    border-radius: calc(infinity * 1px);
+    background: var(--color-gray-900);
+    color: var(--color-white);
+    font-size: var(--text-lg);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-wrap: wrap;
+
 }
 /* @font-face {
     font-family: 'Outfit';
@@ -141,6 +164,7 @@ body.light{
     src: url(https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJuktqQ4E.woff2) format('woff2');
     /* unicode-range: U +0100 -02BA, U +02BD -02C5, U +02C7 -02CC, U +02CE -02D7, U +02DD -02FF, U +0304, U +0308, U +0329, U +1D00 -1DBF, U +1E00 -1E9F, U +1EF2 -1EFF, U +2020, U +20A0 -20AB, U +20AD -20C0, U +2113, U +2C60 -2C7F, U + A720-A7FF; */
 /* }  */
+
 @font-face {
     font-family: 'Outfit';
     font-weight: 100 900; /* Variable fonts support a range */

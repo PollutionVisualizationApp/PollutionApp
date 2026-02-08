@@ -363,7 +363,6 @@ a {
     display: flex;
     flex-direction: column;
     font-family: 'Montserrat', sans-serif;
-    gap: 44px;
     font-size: 20px;
 }
 #slika-logo{
@@ -371,4 +370,7 @@ a {
 }
 html {
     scroll-behavior: smooth;
+}
+.liForTheme{
+    padding: 20px;
 }
