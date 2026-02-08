@@ -1,5 +1,5 @@
 #map-section {
-    background-color: var(--black-color);
+    background-color: var(--background-color);
     position: relative;
     z-index: 10;
     padding-top: 60px; /* ОВА Е ГАПОТ ШТО ГО ПОБАРА */

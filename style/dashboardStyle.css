@@ -7,19 +7,7 @@
     background 0.1s ease,
     background-color 0.1s ease;
 }
-body.light{
-    --background-color:var(--color-gray-50);  
-    --card-background: var(--color-white);
-    --text-color: var(--color-black);
-    --text-color-light:var(--color-gray-700);
-    --text-color-light-2: var(--color-gray-800);
 
-    --color-active: var(--color-black);
-    --border-color: var(--color-gray-200);
-    --tw-border-style: 1px solid var(--border-color);
-    --color-type: var(--color-gray-100);
-    --color-type-text: var(--color-gray-300);
-}
 body{
     margin: 0;
     background: var(--background-color); 

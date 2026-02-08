@@ -159,22 +159,7 @@ function updateChart() {
             return;
 
         } else if (selectedTimeframe === 'weekly') {
-            // timeframeKey = "Week";
-            // xRange = 4; // Покажи 4 недели одеднаш
-            //
-            // // Креирање категории во формат: 2026-01 до 2026-02
-            // categories = Array.from({length: 52}, (_, i) => {
-            //     const weekNum = i + 1;
-            //     // Груба пресметка на месеци за приказ на оската
-            //     const startMonth = Math.ceil(weekNum / 4.33);
-            //     const endMonth = Math.ceil((weekNum + 1) / 4.33);
-            //     return `${selectedYear}-${String(startMonth).padStart(2, '0')} to ${selectedYear}-${String(endMonth > 12 ? 12 : endMonth).padStart(2, '0')}`;
-            // });
-            //
-            // // Зумирај на тековниот месец (денес е јануари според системот)
-            // const currentMonth = new Date().getMonth() + 1;
-            // startZoom = Math.max(0, (currentMonth - 1) * 4);
-            // endZoom = startZoom + 4;
+            
             new WeeklyData(chartInstance);
             return;
         } else {
@@ -250,6 +235,9 @@ function updateMinMaxStats(allSeries) {
     let parentMax = document.querySelectorAll("#maxDiv .values")[0];
     let parentMin = document.querySelectorAll("#minDiv .values")[0];
 
+    let sMin = parseFloat(minElement.innerText);
+    let sMax = parseFloat(maxElement.innerText);
+    
     let allGlobalValues = [];
 
     allSeries.forEach(series => {
@@ -276,8 +264,11 @@ function updateMinMaxStats(allSeries) {
 
     // Ажурирај ги главните големи бројки
     if (allGlobalValues.length > 0) {
-        maxElement.textContent = Math.max(...allGlobalValues).toFixed(2);
-        minElement.textContent = Math.min(...allGlobalValues).toFixed(2);
+        max = Math.max(...allGlobalValues).toFixed(2);
+        min = Math.min(...allGlobalValues).toFixed(2);
+
+        DailyData.countUpFloat(minElement, sMin, min);
+        DailyData.countUpFloat(maxElement, sMax, max);
     }
 }
 // Koga ke se odbere weekly ili daily da se resetira min i max

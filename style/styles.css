@@ -1,5 +1,7 @@
 /*=============== GOOGLE FONTS ===============*/
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap");
+@import "root.css";
+
+
 
 /*=============== VARIABLES CSS ===============*/
 :root {
@@ -11,11 +13,11 @@
     --black-color-light: hsl(220, 24%, 15%);
     --black-color-lighten: hsl(220, 20%, 18%);
     --white-color: #fff;
-    --body-color: hsl(220, 100%, 97%);
+    --body-color: var(--background-color);
 
     /*========== Font and typography ==========*/
     /*.5rem = 8px | 1rem = 16px ...*/
-    --body-font: "Montserrat", sans-serif;
+    --body-font: var(--font-outfit);
     --normal-font-size: .938rem;
 
     /*========== Font weight ==========*/
@@ -335,27 +337,34 @@ a {
 }
 /* Background image */
 #background {
-    background-image: url(../img/airpollution.jpg);
+    /* background-image: url(../img/airpollution.jpg); */
     height: 100vh;
     width: 100%;
     background-size: cover;
     background-position: center center;
     position: fixed;
     top: 0;
-    z-index: -1;
+    z-index: 1;
 }
 /* Text overlay centered on background */
 .overlay-text {
-    position: fixed; /* fixed so se dvizi so screen */
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); /* centriranje po X i Y */
-    color: white; /* bel tekst vrz tamna slika */
+    /* position: fixed; */
+    /* top: 50%; */
+    /* left: 50%; */
+    /* transform: translate(-50%, -50%); */
+    /* color: white; */
     text-align: center;
-    background-color: rgba(0, 0, 0, 0.4); /* poluprozirna pozadina za tekst */
+    background-color: var(--card-background);
+    border: var(--tw-border-style);
     padding: 1rem 2rem;
-    border-radius: 10px;
+    border-radius: var(--radius-2xl);
+    padding: calc(var(--spacing) * 6);
+    /* border-radius: 10px; */
+    display: flex;
+    flex-direction: column;
     font-family: 'Montserrat', sans-serif;
+    gap: 44px;
+    font-size: 20px;
 }
 #slika-logo{
     color: white;
