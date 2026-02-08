@@ -168,7 +168,7 @@ function updateChart() {
     document.getElementById("titleChart").textContent = labels[selectedTimeframe].title;
     document.getElementById("subTitleChart").textContent = labels[selectedTimeframe].subtitle;
     // ПРВО: Ресетирај го UI-то за соодветниот timeframe
-    // resetMinMaxUI(selectedTimeframe);
+    resetMinMaxUI(selectedTimeframe);
         if (selectedTimeframe === 'daily') {
             options.xaxis.range = undefined;
             instance = new DailyData(chartInstance);
@@ -291,16 +291,16 @@ function updateMinMaxStats(allSeries) {
     }
 }
 // Koga ke se odbere weekly ili daily da se resetira min i max
-// function resetMinMaxUI(timeframe) {
-//     const titles = document.querySelectorAll('.minMax h3');
-//     const titlePrefix = timeframe === 'monthly' ? 'Yearly' : (timeframe === 'weekly' ? 'Weekly' : 'Todays');
+function resetMinMaxUI(timeframe) {
+    const titles = document.querySelectorAll('.minMax h3');
+    const titlePrefix = timeframe === 'monthly' ? 'Yearly' : (timeframe === 'weekly' ? 'Weekly' : 'Todays');
 
-//     if (titles[0]) titles[0].textContent = `${titlePrefix} Max`;
-//     if (titles[1]) titles[1].textContent = `${titlePrefix} Min`;
+    if (titles[0]) titles[0].textContent = `${titlePrefix} Max`;
+    if (titles[1]) titles[1].textContent = `${titlePrefix} Min`;
 
-//     // Ги чистиме малите меурчиња од претходните пресметки
-//     document.querySelectorAll("#maxDiv .values, #minDiv .values").forEach(v => v.innerHTML = "");
+    // Ги чистиме малите меурчиња од претходните пресметки
+    // document.querySelectorAll("#maxDiv .values, #minDiv .values").forEach(v => v.innerHTML = "");
 
-//     // Го ажурираме типот (pm10/pm25)
-//     document.querySelectorAll('.typeMinMax').forEach(t => t.innerText = selectedType);
-// }
+    // Го ажурираме типот (pm10/pm25)
+    document.querySelectorAll('.typeMinMax').forEach(t => t.innerText = selectedType);
+}
