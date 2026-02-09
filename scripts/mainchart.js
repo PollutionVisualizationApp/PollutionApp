@@ -140,9 +140,28 @@ function toggleSensor(sensorId, btn) {
         selectedSensors.push(sensorId);
         btn.classList.add('active');
     }
+    else if(selectedSensors.length === 3){
+        showHideDialog(1);
+        return;
+    }
     updateChart();
 }
 
+function showHideDialog(a){
+    let element = document.getElementById("errorDialog");
+    if(a==1){
+        element.style.visibility = "visible";
+        element.style.opacity = 1;  
+    }
+    else{
+        element.style.visibility = "hidden";
+        element.style.opacity = 0;
+    }
+    
+}
+document.getElementById("hideDialog").addEventListener("click", ()=>{
+    showHideDialog(0);
+})
 
 function updateChart() {
     let categories = [];

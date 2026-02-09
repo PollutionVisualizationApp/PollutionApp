@@ -137,9 +137,6 @@ body.light{
 
 }
 
-#themeCheckBox{
-    display: none;
-}
 .circleButton{
     width: calc(var(--spacing) * 11);
     height: calc(var(--spacing) * 11);

@@ -11,7 +11,7 @@
     <script src="scripts/weeklyClass.js" defer></script>
     <script src="scripts/dailyClass.js" defer></script>
     <script src="scripts/mainchart.js" defer></script>
-    <script src="scripts/theme.js" defer></script>
+    <script src="scripts/theme.js" ></script>
     <title>Dashboard</title>
 </head>
 <body>
@@ -29,9 +29,11 @@ heading:
 font-size: var(--text-lg);
 line-height: var(--tw-leading, var(--text-lg--line-height));
 -->
+<div class="haderCard">
+    <a href="index.html"><i class="fa-solid fa-arrow-left"></i></a>
+    <button id="themeCheckBox" class="circleButton" value=""><i class="fa-regular fa-lightbulb"></i></button>
+</div>
 
-<input type="checkbox" id="themeCheckBox">
-<label for="themeCheckBox" class="circleButton"><i class="fa-regular fa-lightbulb"></i></label>
 
 
     <div class="grid">
@@ -44,6 +46,18 @@ line-height: var(--tw-leading, var(--text-lg--line-height));
                 </div>
             </div>
             <div class="card">
+                <div id="errorDialog">
+                    <div id="dialogCard">
+                        <div class="message">
+                            <div class="exclamation">
+                                <i class="fa-solid fa-exclamation"></i>
+                            </div>
+                            <p>You can't chose more than 3 sensors</p>
+                        </div>
+                        <button id="hideDialog">Ok</button>
+                        
+                    </div>
+                </div>
                 <h3>Sensor</h3>
                 <div class="buttonContainer" id="sensorButtons">
                     <!-- Копчиња за сензори ќе се креираат динамично со JS -->

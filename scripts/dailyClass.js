@@ -252,6 +252,9 @@ class DailyData{
        let min = Math.min(...arr);
        let max = Math.max(...arr);
 
+       min = Number.isFinite(min)?min:0;
+       max = Number.isFinite(max)?max:0;
+
        types.forEach(t=>t.innerText=selectedType);
 
        DailyData.countUpFloat(minElement, sMin, min);
@@ -274,6 +277,9 @@ class DailyData{
             let min = Math.min(...arr);
             let max = Math.max(...arr);
             
+            min = Number.isFinite(min)?min:0;
+            max = Number.isFinite(max)?max:0;
+
             let div = document.createElement('div');
             div.classList.add("minMaxInfo");
             div.innerHTML = max;

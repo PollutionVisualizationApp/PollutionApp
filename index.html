@@ -47,8 +47,7 @@
 
                 <li><a href="#map-section" class="nav__link">Sensor Map</a></li>
                 <li class="liForTheme">
-                    <input type="checkbox" id="themeCheckBox">
-                    <label for="themeCheckBox" class="circleButton"><i class="fa-regular fa-lightbulb"></i></label>
+                    <button id="themeCheckBox" class="circleButton" value=""><i class="fa-regular fa-lightbulb"></i></button>
                 </li>
             </ul>
         </div>
@@ -59,7 +58,7 @@
 <div id="background">
 
     <div class="landingScreen">
-    <div id="svgLanding">
+    <div id="svgLanding" class="NotPolluted">
         <svg id="eSd7gPYVLGc1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1508.62788 1499.97069" shape-rendering="geometricPrecision"   text-rendering="geometricPrecision" project-id="87808f47bf4e4933a18bb08697e4b562" export-id="3f22adfb515f460baf41a5dad8e2c1f1" cached="false">
         <style>
 
@@ -81,7 +80,7 @@
                     <h1>Загадување на воздухот во Скопје</h1>
                     <!-- <p>Следење на PM10/2.5 честички по региони</p> -->
                     <div id="chart"></div>
-            <select id="sensorPollution">    
+            <!-- <select id="sensorPollution">    
                 <option value="MediumPolluted">
                     Medium
                 </option>
@@ -91,7 +90,7 @@
                 <option value="NotPolluted">
                     Less
                 </option>
-            </select>
+            </select> -->
             </div>
             
     </div>
@@ -113,7 +112,7 @@
     <div id="map"></div>
 </section>
 <script src="scripts/dailyClass.js"></script>
-<script src="/scripts/map.js"></script>
+<script src="scripts/map.js"></script>
 <!--=============== MAIN JS ===============-->
 <script src="scripts/main.js"></script>
 </body>

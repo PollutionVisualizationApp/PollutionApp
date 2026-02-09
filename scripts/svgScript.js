@@ -1,14 +1,14 @@
 
-document.getElementById("sensorPollution").addEventListener("change", (e)=>{
+// document.getElementById("sensorPollution").addEventListener("change", (e)=>{
 
-    let val = e.target.value;
+//     let val = e.target.value;
 
-    console.log(val);
-    document.getElementById("svgLanding").classList = "";
-    document.getElementById("svgLanding").classList.add(val);
+//     console.log(val);
+//     document.getElementById("svgLanding").classList = "";
+//     document.getElementById("svgLanding").classList.add(val);
 
     
-})
+// })
 
 var options = {
           series: [0],
@@ -58,7 +58,7 @@ var chart = new ApexCharts(document.querySelector("#chart"), options);
 chart.render();
 
 let sensor = "1003";
-let selectedType = "pm25";
+let selectedType = "pm10";
     function formatWithTimezone(date) {
 
     const offset = date.getTimezoneOffset();
@@ -94,8 +94,8 @@ let selectedType = "pm25";
     }
 
     let airQ = { 
-        pm25:[15,25],
-        pm10:[21, 49]
+        pm25:50,
+        pm10:70
     }
   
 
@@ -133,12 +133,13 @@ let selectedType = "pm25";
             });
 
  function changeAnim(val){
-    arr = airQ[selectedType];
-    if(val<arr[0]){
+    const percentage = (val / maxValue[selectedType]) * 100;
+    document.getElementById("svgLanding").classList = "";
+    if(percentage<=30){
         document.getElementById("svgLanding").classList.add("NotPolluted");
         return;
     }
-    else if(val<arr[1]){
+    else if(percentage<=70){
         document.getElementById("svgLanding").classList.add("MediumPolluted");
         return;
     }
