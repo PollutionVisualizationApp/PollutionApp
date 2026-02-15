@@ -54,26 +54,31 @@ class WeeklyData {
     initChart() {
         let dates = this.getDates();
         this.sensorData = [];
-
-        // selectedSensors.forEach(s => {
-        //     fetch(`https://skopje.pulse.eco/rest/dataRaw?sensorId=${s}&type=${selectedType}&from=${dates.from}&to=${dates.now}`)
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             let avgData = this.getAveragePerDay(data, s);
-        //             this.sensorData.push(avgData);
-        //             this.showChart();
-        //             this.setMinMax();
-        //         });
-        // });
-
-        const requests = selectedSensors.map(s =>
+        const requests =  Object.keys(sensorNames).map(s =>
         fetch(`https://skopje.pulse.eco/rest/dataRaw?sensorId=${s}&type=${selectedType}&from=${dates.from}&to=${dates.now}`)
             .then(res => res.json())
-            .then(data => this.getAveragePerDay(data, s))
+            .then(data => {
+                
+            let obj = {};
+            obj[s] = this.getAveragePerDay(data, s)
+            return obj; 
+            })
         );
 
         Promise.all(requests).then(results => {
-        this.sensorData = results;   
+        const formattedObject = Object.assign({}, ...results);
+
+        
+        this.sensorData = Object.values(formattedObject);
+        
+         this.allSensors = this.getSeries(Object.keys(sensorNames));
+
+        // //console.log(this.allSensors);
+
+        let res = []
+        selectedSensors.forEach(s=>res.push(formattedObject[s]));
+        this.sensorData = res;
+
         this.showChart();            
         this.setMinMax();
         });
@@ -81,7 +86,7 @@ class WeeklyData {
     }
 
     showChart() {
-        const series = this.getSeries();
+        const series = this.getSeries(selectedSensors);
         const xLabels = this.getXlabels();
 
         options.series = series;
@@ -92,8 +97,10 @@ class WeeklyData {
         this.chart.updateOptions(options, true, true);
     }
 
-    getSeries() {
-        return selectedSensors.map(ss => ({
+    getSeries(sensors) {
+        //console.log(sensors);
+        //console.log(this.sensorData);
+        return sensors.map(ss => ({
             name: sensorNames[ss] || ss,
             data: this.sensorData.flat(1).filter(s => s.sensorId == ss).map(d => d.value)
         }));
@@ -124,5 +131,6 @@ class WeeklyData {
         DailyData.countUpFloat(maxElement, sMax, max);
 
         DailyData.showMinMaxEachSensor(this.sensorData);
+        DailyData.minMaxPercDiff(this.allSensors, min, max);
     }
 }

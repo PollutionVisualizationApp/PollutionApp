@@ -50,7 +50,7 @@ class DailyData{
         const diffMs = Math.abs(end - start);
         const diffHours = diffMs / (1000 * 60 * 60);
 
-        // console.log(diffHours);
+        // //console.log(diffHours);
         return diffHours;
     }
 
@@ -64,8 +64,8 @@ class DailyData{
                 previousHour = a.index;
             }
             if(this.hourDiff(previousHour,a.index)>1){
-                //  console.log(previousHour+" "+a.index);
-                // console.log(a);
+                //  //console.log(previousHour+" "+a.index);
+                // //console.log(a);
                 let tmp = this.hourDiff(previousHour,a.index);
                 const [baseHour] = previousHour.split('T')[1].split(':').map(Number);
 
@@ -73,12 +73,12 @@ class DailyData{
                 for (let i = 1; i < tmp; i++) {
                 
                     const newHour = (baseHour + i) % 24; 
-                    // console.log(obj);
+                    // //console.log(obj);
                     obj.stamp = String(newHour).padStart(2, '0') + ':00';
                     obj.index = obj.index.split('T')[0]+"T"+obj.stamp;
                     newArr.push(obj);
                     
-                    // console.log("PREV: "+previousHour); 
+                    // //console.log("PREV: "+previousHour); 
                 }
                 // previousHour = obj.index;
              }
@@ -98,15 +98,15 @@ class DailyData{
     const averageByHour = data.reduce((acc, item) => {
         const date = new Date(item.stamp);
 
-        // console.log('stamp:', item.stamp);
-        // console.log('before:', date.toISOString());
+        // //console.log('stamp:', item.stamp);
+        // //console.log('before:', date.toISOString());
         const minutes = date.getMinutes();
         date.setMinutes(0, 0, 0);
 
         if (minutes >= 30) {
         date.setHours(date.getHours() + 1);
         }
-        // console.log('after :', date.toISOString());
+        // //console.log('after :', date.toISOString());
 
         const stamp =
         date.getFullYear() + '-' +
@@ -115,7 +115,7 @@ class DailyData{
         String(date.getHours()).padStart(2, '0') + ':00';
 
         const hour = stamp.slice(11);
-        console.log(item.stamp+" "+stamp);
+        // //console.log(item.stamp+" "+stamp);
         if (!acc[stamp]) {
         acc[stamp] = {
             sensorId: id,
@@ -148,7 +148,8 @@ class DailyData{
     initChart(){
         let dates = this.getDates();
 
-        const requests = selectedSensors.map(s =>
+        //console.log(Object.keys(sensorNames))
+        const requests = Object.keys(sensorNames).map(s =>
         fetch(`https://skopje.pulse.eco/rest/dataRaw?sensorId=${s}&type=${selectedType}&from=${dates.yesterday}&to=${dates.now}`)
             .then(res => res.json())
             .then(data => {
@@ -157,13 +158,27 @@ class DailyData{
             if (avgData.length > 24) {
                 avgData = avgData.slice(avgData.length - 24);
             }
-
-            return avgData; // ⬅️ return result
+            let obj = {};
+            obj[s] = avgData
+            return obj; 
             })
         );
 
         Promise.all(requests).then(results => {
-        this.sensorData = results;  
+        //console.log(results);
+        const formattedObject = Object.assign({}, ...results);
+
+        
+        this.sensorData = Object.values(formattedObject);
+        this.allSensors = this.getSeries(Object.keys(sensorNames));
+
+        //console.log(this.allSensors);
+
+        let res = []
+        selectedSensors.forEach(s=>res.push(formattedObject[s]));
+        this.sensorData = res;
+
+        //console.log(this.sensorData);
         this.showChart();           
         this.setMinMax();
         });
@@ -177,24 +192,24 @@ class DailyData{
         return maxLen;
     }
     showChart(){
-        const series = this.getSeries();
+        const series = this.getSeries(selectedSensors);
         // const longestSeries(series);
         const xLabels = this.getXlabels();
         
-        // console.log(options.xaxis);
-        // console.log(xLabels);
+        // //console.log(options.xaxis);
+        //console.log(xLabels);
         
         options.series = series,
         options.xaxis.categories = xLabels;
         // options.xaxis.range = 24;
-        // console.log(options.xaxis);
+        // //console.log(options.xaxis);
         this.chart.updateOptions(options, true, true);
     }
 
-    getSeries(){
+    getSeries(sensors){
 
         let arr = [];
-        selectedSensors.forEach(ss=>{
+        sensors.forEach(ss=>{
 
             let obj={
                 name:"",
@@ -206,7 +221,7 @@ class DailyData{
             if(obj.data.length<24){
                 obj.data = this.normalizeSeries(obj.data, 24);
             }
-            // console.log(obj);
+            // //console.log(obj);
             arr.push(obj);
         })
 
@@ -261,6 +276,7 @@ class DailyData{
        DailyData.countUpFloat(maxElement, sMax, max);
    
        DailyData.showMinMaxEachSensor(this.sensorData)
+       DailyData.minMaxPercDiff(this.allSensors, min, max)
     }
     static showMinMaxEachSensor(sensorData){ 
         let parentMax = document.querySelectorAll("#maxDiv .values")[0];
@@ -299,7 +315,30 @@ class DailyData{
             lastValue = series[i];
             return series[i];
             }
-            return lastValue ?? 0;
+            // return lastValue ?? 0;
+            return 0;
         });
+    }
+
+    static minMaxPercDiff(allSensor, min, max){
+        let arr = allSensor.map(a=> a.data).flat(1);
+        let minA = Math.min(...arr);
+        let maxA = Math.max(...arr);
+
+        // [...document.querySelectorAll(".compYesterday")].forEach(c=>{
+        //     c.style.display="flex";
+        // })
+        minA = Number.isFinite(minA)?minA:0;
+        maxA = Number.isFinite(maxA)?maxA:0;
+
+        let percMax = ((maxA- max)/Math.max(max, 1))*100;
+        let percMin = (Math.abs(min-minA)/Math.max(minA, 1))*100;
+
+        document.getElementById("maxPerc").innerHTML = `${percMax.toFixed(1)}%`;
+        document.getElementById("minPerc").innerHTML = `${percMin.toFixed(1)}%`;
+
+        //console.log(percMin);
+        //console.log(arr);
+
     }
 }

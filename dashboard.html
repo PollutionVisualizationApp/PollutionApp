@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="style/dashboardStyle.css"></link>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
@@ -12,7 +12,7 @@
     <script src="scripts/dailyClass.js" defer></script>
     <script src="scripts/mainchart.js" defer></script>
     <script src="scripts/theme.js" ></script>
-    <title>Dashboard</title>
+    
 </head>
 <body>
 <!--
@@ -41,7 +41,7 @@ line-height: var(--tw-leading, var(--text-lg--line-height));
             <div class="card">
                 <h3>Type of data</h3>
                 <div class="buttonContainer" id="typeButtons">
-                <button data-type="pm10" type="button">pm10</button>
+                <button data-type="pm10" class="active" type="button">pm10</button>
                 <button data-type="pm25" type="button">pm2.5</button>
                 </div>
             </div>
@@ -74,7 +74,7 @@ line-height: var(--tw-leading, var(--text-lg--line-height));
                 <select id="yearSelect" class="custom-select small-select">
                     <option value="2024">2024</option>
                     <option value="2025" selected>2025</option>
-                    <option value="2026">2026</option>
+                    <!-- <option value="2026">2026</option> -->
                 </select>
             </div>
         </div>
@@ -101,10 +101,10 @@ line-height: var(--tw-leading, var(--text-lg--line-height));
                 <div id="maxDiv"><p class="subHead typeMinMax">pm10</p><span class="values"></span></div>
                 <span class="currentValue">
                     <h2 id="max">4.86</h2>
-                    <div class="compYesterday">
-                        <p class="subHead">1d ago</p>
-                        <div class="percent bad">
-                            <i class="fa-solid fa-arrow-down"></i> 10.80%
+                    <div class="compYesterday" >
+                        <p class="subHead">All sensors</p>
+                        <div class="percent good">
+                            <i class="fa-solid fa-arrow-down"></i> <span id="maxPerc">0.00%</span>
                         </div>
                     </div>
                 </span>
@@ -114,10 +114,10 @@ line-height: var(--tw-leading, var(--text-lg--line-height));
             <div id="minDiv"><p class="subHead typeMinMax">pm10</p><span class="values"></span></div>
             <span class="currentValue">
                     <h2 id="min">2.50</h2>
-                    <div class="compYesterday">
-                        <p class="subHead">1d ago</p>
-                        <div class="percent good">
-                            <i class="fa-solid fa-arrow-down"></i> 10.80%
+                    <div class="compYesterday" >
+                        <p class="subHead">All sensors</p>
+                        <div class="percent bad">
+                            <i class="fa-solid fa-arrow-down"></i> <span id="minPerc">0.00%</span>
                         </div>
                     </div>
                 </span>

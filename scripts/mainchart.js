@@ -60,7 +60,7 @@ const sensorNames = {
     "3568aa20-235a-408c-861b-279c9f4d7709": "Vodno",
     "6c6a9ef6-85f9-45c0-9e01-0c9d2fb87bc2": "Capitol Mall",
     "fef6bc74-bf86-4874-9531-51b033580379": "Taftalidze 2",
-    "8defa36a-62ca-448a-9ffb-5a2848c2dfa0": "FINKI/ZOO",
+    "8defa36a-62ca-448a-9ffb-5a2848c2dfa0": "Zoo",
     "1000":"Centar",
     "1003":"Karpos"
 };
@@ -79,7 +79,6 @@ function initDashboard() {
     let requestedSensorId = getSensorFromUrl();
     sensorContainer.innerHTML = '';
     selectedSensors = []; // Ресетирај за почеток
-
     sensors.forEach(sensor => {
         const btn = document.createElement('button');
         btn.textContent = sensorNames[sensor] || sensor;
@@ -162,7 +161,34 @@ function showHideDialog(a){
 document.getElementById("hideDialog").addEventListener("click", ()=>{
     showHideDialog(0);
 })
+function getSeties(type, timeframeKey, categories){
+    let t = type==0?selectedSensors:Object.keys(sensorNames);
+        const allSeries = t.map(sensorId => {
+        let lastValue=null;
+        const chartData = categories.map((_, index) => {
+            const timeValue = index + 1;
+            const found = sensorData.find(d =>
+                d.SensorId == sensorId &&
+                d.Year == selectedYear &&
+                d.Type === selectedType &&
+                // Оваа линија долу е клучна:
+                (d[timeframeKey] == timeValue)
+            );
 
+            // Проверка за двата можни клучa: Value или MonthlyAvg
+            if (found) {
+                const val = found.Value !== undefined ? found.Value : found.MonthlyAvg;
+                const finalVal = (val!=undefined&&val!=NaN)? val: lastValue;
+                lastValue = finalVal;
+                return parseFloat(finalVal).toFixed(2);
+
+            }
+            return lastValue; //ffill
+        });
+        return { name: sensorNames[sensorId] || sensorId, data: chartData };
+    });
+    return allSeries;
+}
 function updateChart() {
     let categories = [];
     let timeframeKey = "";
@@ -177,7 +203,7 @@ function updateChart() {
         },
         weekly:{
             title:"Weekly Data",
-            subtitle:"Last weeks"
+            subtitle:"This week"
         },
         monthly:{
             title:"Monthly Data",
@@ -202,35 +228,17 @@ function updateChart() {
             categories = Array.from({length: 12}, (_, i) => `${selectedYear}-${String(i + 1).padStart(2, '0')}`);
             timeframeKey = "Month";
         }
-        console.log(categories);
-    const allSeries = selectedSensors.map(sensorId => {
-        let lastValue=null;
-        const chartData = categories.map((_, index) => {
-            const timeValue = index + 1;
-            const found = sensorData.find(d =>
-                d.SensorId == sensorId &&
-                d.Year == selectedYear &&
-                d.Type === selectedType &&
-                // Оваа линија долу е клучна:
-                (d[timeframeKey] == timeValue)
-            );
+        //console.log(categories);
 
-            // Проверка за двата можни клучa: Value или MonthlyAvg
-            if (found) {
-                const val = found.Value !== undefined ? found.Value : found.MonthlyAvg;
-                const finalVal = (val!=undefined&&val!=NaN)? val: lastValue;
-                lastValue = finalVal;
-                return parseFloat(finalVal).toFixed(2);
+    const allSeries = getSeties(0, timeframeKey, categories);
 
-            }
-            return lastValue; //ffill
-        });
-        return { name: sensorNames[sensorId] || sensorId, data: chartData };
-    });
+    const allSensorsSeries = getSeties(1, timeframeKey, categories);
 
-    console.log(allSeries);
+    let allSensors = allSensorsSeries.map(d=>d["data"].map(parseFloat)).flat(1);
 
-    updateMinMaxStats(allSeries);
+    //console.log(allSensors);
+
+    updateMinMaxStats(allSeries, allSensorsSeries);
 
     options.series = allSeries;
     options.xaxis.categories = categories;
@@ -264,7 +272,7 @@ function getSensorFromUrl() {
 }
 
 //MinMax za godisnite statistiki
-function updateMinMaxStats(allSeries) {
+function updateMinMaxStats(allSeries, allSensors) {
     let minElement = document.getElementById("min");
     let maxElement = document.getElementById("max");
     let parentMax = document.querySelectorAll("#maxDiv .values")[0];
@@ -272,7 +280,9 @@ function updateMinMaxStats(allSeries) {
 
     let sMin = parseFloat(minElement.innerText);
     let sMax = parseFloat(maxElement.innerText);
-    
+
+
+
     let allGlobalValues = [];
    
     parentMax.innerHTML="";
@@ -305,8 +315,12 @@ function updateMinMaxStats(allSeries) {
         max = Math.max(...allGlobalValues).toFixed(2);
         min = Math.min(...allGlobalValues).toFixed(2);
 
+        // let allMax = Math.max(...allSensors);
+        // let allMin = Math.min(...allSensors);
+
         DailyData.countUpFloat(minElement, sMin, min);
         DailyData.countUpFloat(maxElement, sMax, max);
+        DailyData.minMaxPercDiff(allSensors, min, max);
     }
 }
 // Koga ke se odbere weekly ili daily da se resetira min i max
